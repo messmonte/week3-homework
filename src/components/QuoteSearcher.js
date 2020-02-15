@@ -1,29 +1,38 @@
 import React, { Component } from "react";
 import Quote from "./Quote";
+import Form from "./Form";
 
 export default class QuoteSearcher extends Component {
   state = {
     quotes: [],
     likedQuotes: 0,
     dislikedQuotes: 0,
-    fetching: true
+    fetching: false,
+    name: ""
   };
   //
-  componentWillMount() {
-    fetch("https://quote-garden.herokuapp.com/quotes/search/tree")
-      .then(response => response.json())
+  searchQuotes = keyword => {
+    this.setState({
+      //NOW WE GONNA FETCH
+      fetching: true
+    });
+
+    fetch(`https://quote-garden.herokuapp.com/quotes/search/${keyword}`)
+      .then(res => res.json())
       .then(data => {
-        return this.setState({
+        this.setState({
+          name: "",
           quotes: data.results.map(quote => {
             return {
               ...quote,
               liked: 0
             };
           }),
+          //RESET FETCHING TO FALSE SO IT STOPS
           fetching: false
         });
       });
-  }
+  };
 
   setLiked = (id, liked) => {
     console.log("hello!", id, liked);
@@ -49,6 +58,7 @@ export default class QuoteSearcher extends Component {
     return res;
   };
   //
+
   renderQuote = (quote, index) => {
     return (
       <Quote
@@ -63,18 +73,34 @@ export default class QuoteSearcher extends Component {
   };
   //
   render() {
-    const quotes = this.state.quotes;
+    const allQuotes = this.state.quotes;
+    const quoteList = allQuotes.reduce((acc, curr) => {
+      if (acc.map(quote => quote.quoteText).includes(curr.quoteText)) {
+        return acc;
+      } else {
+        acc.push(curr);
+      }
+      return acc;
+    }, []);
+
     if (this.state.fetching) {
       return <p>Loading...breathe in, breathe out.</p>;
-    } else {
+    } else if (!this.state.fetching) {
       return (
         <div>
+          <Form searchQuotes={this.searchQuotes} />
           <h1>Quotes</h1>
           <h2>
             Liked: {this.likedAndDisliked(1)}/ Disliked:{" "}
             {this.likedAndDisliked(-1)}
           </h2>
-          {quotes.map(this.renderQuote)}
+          <ol>
+            {quoteList.length === 0 ? (
+              <p>Please, type something you'd like to see.</p>
+            ) : (
+              quoteList.map(this.renderQuote)
+            )}
+          </ol>
         </div>
       );
     }

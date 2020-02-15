@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 
 export default class Quote extends Component {
-  componentDidMount() {}
   render() {
     const greenText = {
       color: "green",
@@ -22,7 +21,8 @@ export default class Quote extends Component {
               : redText
           }
         >
-          {this.props.quoteText} <br></br>by {this.props.quoteAuthor}
+          {this.props.quoteText} <br></br>by{" "}
+          {this.props.quoteAuthor ? this.props.quoteAuthor : "Anonymous"}
           <button onClick={() => this.props.setLiked(this.props.id, 1)}>
             :)
           </button>

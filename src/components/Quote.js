@@ -1,26 +1,34 @@
 import React, { Component } from "react";
 
 export default class Quote extends Component {
-  state = {
-    likeCounter: 0,
-    dislikeCounter: 0
-  };
-  //
-  // likeQuote = quoteText => {
-  //   return (quoteText.style = "font-style=bold;color:green;");
-  // };
-  // //
-  // dislikeQuote = text => {
-  //   return ();
-  // };
-  //
+  componentDidMount() {}
   render() {
+    const greenText = {
+      color: "green",
+      fontWeight: "bold"
+    };
+    const redText = {
+      color: "red",
+      fontWeight: "bold"
+    };
     return (
       <div>
-        <p id="quoteParagraph">
+        <p
+          style={
+            this.props.liked === 0
+              ? null
+              : this.props.liked === 1
+              ? greenText
+              : redText
+          }
+        >
           {this.props.quoteText} <br></br>by {this.props.quoteAuthor}
-          <button onClick={(this.props.quoteText.style = "green")}>:)</button>
-          <button onClick={(this.props.quoteText.style = "red")}>:(</button>
+          <button onClick={() => this.props.setLiked(this.props.id, 1)}>
+            :)
+          </button>
+          <button onClick={() => this.props.setLiked(this.props.id, -1)}>
+            :(
+          </button>
         </p>
       </div>
     );
